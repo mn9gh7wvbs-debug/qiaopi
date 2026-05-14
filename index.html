@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>給阿嬤的情書 · 線上銀信局</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;700;900&family=ZCOOL+XiaoWei&family=Ma+Shan+Zheng&family=Liu+Jian+Mao+Cao&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        /* ============================
+           全局重置与变量
+           ============================ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --color-paper: #f4ead5;
+            --color-paper-light: #faf3e0;
+            --color-paper-dark: #e8dcc0;
+            --color-ink: #2a1810;
+            --color-ink-light: #5a4030;
+            --color-red: #8b1a1a;
+            --color-red-bright: #c9302c;
+            --color-red-dark: #6b1010;
+            --color-gold: #b8860b;
+            --color-shadow: rgba(42, 24, 16, 0.12);
+
+            --font-title: 'Ma Shan Zheng', 'Noto Serif TC', 'KaiTi', '楷体', serif;
+            --font-body: 'Noto Serif TC', 'KaiTi', '楷体', serif;
+            --font-elegant: 'ZCOOL XiaoWei', 'Noto Serif TC', 'KaiTi', '楷体', serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: linear-gradient(135deg, #f9f3e1 0%, #e8dcc0 100%);
+            min-height: 100vh;
+            color: var(--color-ink);
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(184, 134, 11, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 26, 26, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 540px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================
+           页面切换
+           ============================ */
+        .page {
+            display: none;
+            animation: fadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================
+           第一页 · 输入页
+           ============================ */
+        .header-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--color-ink-light);
+            letter-spacing: 7px;
+            margin-bottom: 10px;
+            font-family: var(--font-elegant);
+        }
+
+        .header-title {
+            text-align: center;
+            font-size: 33px;
+            color: var(--color-ink);
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            font-family: var(--font-title);
+            font-weight: normal;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 18px 0 32px;
+            gap: 10px;
+        }
+
+        .divider-line {
+            width: 58px;
+            height: 1px;
+            background-color: var(--color-ink);
+            opacity: 0.35;
+        }
+
+        .divider-dot {
+            width: 5px;
+            height: 5px;
+            background-color: var(--color-red);
+            transform: rotate(45deg);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            font-size: 15px;
+            color: var(--color-ink);
+            margin-bottom: 9px;
+            letter-spacing: 2px;
+            font-family: var(--font-elegant);
+        }
+
+        .form-label .dot {
+            color: var(--color-red);
+            margin: 0 4px;
+        }
+
+        .form-label .hint {
+            font-size: 12px;
+            color: var(--color-ink-light);
+            margin-left: 4px;
+            font-family: var(--font-body);
+            letter-spacing: 0;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .select-wrapper {
+            position: relative;
+            flex-shrink: 0;
+            min-width: 95px;
+        }
+
+        .form-select,
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            border: 1px solid #d4c4a0;
+            background-color: var(--color-paper-light);
+            color: var(--color-ink);
+            padding: 13px 14px;
+            font-size: 15px;
+            font-family: var(--font-body);
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.25s ease;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%232a1810' d='M6 8L0 0h12z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 34px;
+            cursor: pointer;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            border-color: var(--color-red);
+            box-shadow: 0 0 0 3px rgba(139, 26, 26, 0.08);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 150px;
+            line-height: 1.75;
+        }
+
+        .form-textarea::placeholder {
+            color: #a89b82;
+        }
+
+        /* 物品标签 */
+        .items-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .item-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 17px;
+            border: 1px solid #d4c4a0;
+            background-color: var(--color-paper-light);
+            color: var(--color-ink);
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            font-family: var(--font-body);
+        }
+
+        .item-tag:hover {
+            border-color: var(--color-red);
+            background-color: #fff5f0;
+        }
+
+        .item-tag.selected {
+            background-color: var(--color-red);
+            color: var(--color-paper-light);
+            border-color: var(--color-red);
+            box-shadow: 0 2px 8px rgba(139, 26, 26, 0.25);
+        }
+
+        .item-tag .icon {
+            font-size: 15px;
+            letter-spacing: 0;
+            line-height: 1;
+        }
+
+        /* 提交按钮 */
+        .submit-btn {
+            width: 100%;
+            padding: 17px;
+            background-color: var(--color-red);
+            color: var(--color-paper-light);
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            letter-spacing: 5px;
+            cursor: pointer;
+            font-family: var(--font-elegant);
+            transition: all 0.2s ease;
+            margin-top: 12px;
+            box-shadow: 0 4px 14px rgba(139, 26, 26, 0.28);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--color-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 26, 26, 0.38);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn .icon {
+            font-size: 20px;
+            letter-spacing: 0;
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 13px;
+            color: var(--color-ink-light);
+            letter-spacing: 5px;
+            font-family: var(--font-elegant);
+        }
+
+        .disclaimer {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 11px;
+            color: var(--color-ink-light);
+            opacity: 0.5;
+            line-height: 1.7;
+            letter-spacing: 1px;
+        }
+
+        .error-message {
+            background-color: #fff0f0;
+            color: var(--color-red);
+            border: 1px solid #f0c0c0;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-top: 18px;
+            font-size: 14px;
+            line-height: 1.6;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* ============================
+           第二页 · 过渡页
+           ============================ */
+        #page-transition {
+            min-height: 80vh;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #page-transition.active {
+            display: flex;
+        }
+
+        .transition-content {
+            background-color: var(--color-paper-light);
+            border-radius: 14px;
+            padding: 60px 36px;
+            box-shadow: 0 10px 40px var(--color-shadow);
+            max-width: 420px;
+            width: 100%;
+            border: 1px solid #e0d0b0;
+        }
+
+        .sailing-boat {
+            font-size: 66px;
+            display: inline-block;
+            animation: sailing 2.8s ease-in-out infinite;
+            transform-origin: center bottom;
+            margin-bottom: 32px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        @keyframes sailing {
+            0%, 100% { transform: translateX(-16px) rotate(-6deg); }
+            50% { transform: translateX(16px) rotate(5deg); }
+        }
+
+        .transition-title {
+            font-size: 22px;
+            color: var(--color-ink);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            font-family: var(--font-elegant);
+        }
+
+        .dots-loading::after {
+            content: '...';
+            display: inline-block;
+            animation: dots 1.6s steps(4, end) infinite;
+            width: 0;
+            overflow: visible;
+            white-space: nowrap;
+        }
+
+        @keyframes dots {
+            0%   { content: '...'; }
+            25%  { content: '....'; }
+            50%  { content: '.....'; }
+            75%  { content: '......'; }
+        }
+
+        .transition-desc {
+            font-size: 14px;
+            color: var(--color-ink-light);
+            line-height: 2.2;
+            letter-spacing: 2px;
+            font-family: var(--font-elegant);
+        }
+
+        /* ============================
+           第三页 · 信封页
+           ============================ */
+        .section-label {
+            text-align: center;
+            font-size: 14px;
+            color: var(--color-ink-light);
+            letter-spacing: 10px;
+            margin-bottom: 20px;
+            font-family: var(--font-elegant);
+        }
+
+        .envelope-wrapper {
+            background-color: var(--color-paper-light);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 30px var(--color-shadow);
+            border: 1px solid #e0d0b0;
+        }
+
+        .envelope {
+            background-color: #d4b06a;
+            border: 7px solid var(--color-ink);
+            border-radius: 3px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            min-height: 460px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.08);
+        }
+
+        .envelope-col {
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .envelope-left {
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+
+        .envelope-left-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            color: var(--color-ink);
+            font-size: 22px;
+            letter-spacing: 12px;
+            font-family: var(--font-body);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .envelope-middle {
+            background-color: var(--color-red);
+            background-image: repeating-linear-gradient(
+                -45deg,
+                transparent 0,
+                transparent 11px,
+                rgba(0,0,0,0.06) 11px,
+                rgba(0,0,0,0.06) 13px
+            );
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+            padding-top: 48px;
+        }
+
+        .envelope-middle::before {
+            content: '銀信';
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            color: var(--color-ink);
+            background-color: var(--color-paper);
+            border: 1.5px solid var(--color-ink);
+            padding: 2px 7px;
+            letter-spacing: 2px;
+            font-family: var(--font-body);
+            border-radius: 2px;
+        }
+
+        .qiaopi-big {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 88px;
+            font-weight: 900;
+            color: var(--color-ink);
+            font-family: var(--font-title);
+            letter-spacing: 12px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.15);
+            line-height: 1;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .envelope-right {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .envelope-right-top {
+            border: 1.5px solid var(--color-ink);
+            padding: 16px 12px;
+            font-size: 18px;
+            letter-spacing: 5px;
+            color: var(--color-ink);
+            font-family: var(--font-body);
+            font-weight: 500;
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            margin-top: 10px;
+            border-radius: 2px;
+            background-color: rgba(244, 234, 213, 0.3);
+        }
+
+        .envelope-right-bottom {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            font-size: 19px;
+            letter-spacing: 4px;
+            color: var(--color-ink);
+            font-family: var(--font-body);
+            font-weight: 500;
+            padding-bottom: 30px;
+        }
+
+        .continue-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background-color: var(--color-red);
+            color: var(--color-paper-light);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            letter-spacing: 6px;
+            cursor: pointer;
+            font-family: var(--font-elegant);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(139, 26, 26, 0.22);
+        }
+
+        .continue-btn:hover {
+            background-color: var(--color-red-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(139, 26, 26, 0.32);
+        }
+
+        /* ============================
+           第四页 · 信纸页
+           ============================ */
+        .paper-wrapper {
+            background-color: var(--color-paper-light);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 26px;
+            box-shadow: 0 8px 30px var(--color-shadow);
+            border: 1px solid #e0d0b0;
+        }
+
+        .paper {
+            background-color: var(--color-paper);
+            border: 2.5px solid var(--color-red);
+            border-radius: 3px;
+            padding: 20px 16px;
+            min-height: 500px;
+            position: relative;
+            /* 纸张纹理 */
+            background-image:
+                linear-gradient(rgba(184, 134, 11, 0.025) 1px, transparent 1px);
+            background-size: 100% 4px;
+            box-shadow: inset 0 0 40px rgba(139, 26, 26, 0.04);
+        }
+
+        .paper-inner {
+            border: 1px solid var(--color-red);
+            border-radius: 2px;
+            padding: 16px 12px;
+            min-height: 460px;
+        }
+
+        .letter-content {
+            display: flex;
+            flex-direction: row-reverse; /* 从右到左排列 */
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 460px;
+            gap: 2px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 8px;
+        }
+
+        .letter-line {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            height: 100%;
+            font-family: var(--font-body);
+            font-size: 22px;
+            line-height: 2.0;
+            color: var(--color-ink);
+            letter-spacing: 3px;
+            padding: 0 10px;
+            flex-shrink: 0;
+            white-space: pre-wrap;
+            word-break: keep-all;
+        }
+
+        .letter-line.signature {
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: var(--color-ink-light);
+            align-self: flex-end;
+        }
+
+        /* 信纸竖线分栏 */
+        .paper-inner {
+            background-image: repeating-linear-gradient(
+                to left,
+                transparent 0px,
+                transparent 54px,
+                rgba(139, 26, 26, 0.1) 54px,
+                rgba(139, 26, 26, 0.1) 55px
+            );
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--color-red);
+            color: var(--color-paper-light);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            letter-spacing: 5px;
+            cursor: pointer;
+            font-family: var(--font-elegant);
+            transition: all 0.2s ease;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(139, 26, 26, 0.25);
+        }
+
+        .download-btn:hover {
+            background-color: var(--color-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 26, 26, 0.35);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.55;
+            transform: none;
+            cursor: wait;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            background-color: var(--color-paper-light);
+            color: var(--color-ink);
+            border: 1.5px solid #d4c4a0;
+            border-radius: 8px;
+            font-size: 14px;
+            letter-spacing: 3px;
+            cursor: pointer;
+            font-family: var(--font-elegant);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px var(--color-shadow);
+        }
+
+        .action-btn:hover {
+            border-color: var(--color-red);
+            color: var(--color-red);
+            background-color: #fff5f0;
+            box-shadow: 0 4px 10px rgba(139,26,26,0.1);
+        }
+
+        /* ============================
+           滚动条美化
+           ============================ */
+        .letter-content::-webkit-scrollbar {
+            height: 4px;
+        }
+        .letter-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .letter-content::-webkit-scrollbar-thumb {
+            background-color: rgba(139,26,26,0.2);
+            border-radius: 2px;
+        }
+
+        /* ============================
+           移动端适配
+           ============================ */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px 50px;
+            }
+
+            .header-title {
+                font-size: 28px;
+                letter-spacing: 3px;
+            }
+
+            .input-row {
+                gap: 8px;
+            }
+
+            .select-wrapper {
+                min-width: 88px;
+            }
+
+            .form-select, .form-input, .form-textarea {
+                padding: 12px;
+                font-size: 15px;
+            }
+
+            .envelope-left-text {
+                font-size: 18px;
+                letter-spacing: 8px;
+            }
+
+            .qiaopi-big {
+                font-size: 72px;
+                letter-spacing: 10px;
+            }
+
+            .envelope-right-top {
+                font-size: 15px;
+                padding: 12px 10px;
+            }
+
+            .envelope-right-bottom {
+                font-size: 16px;
+                letter-spacing: 3px;
+            }
+
+            .letter-line {
+                font-size: 20px;
+                line-height: 1.85;
+            }
+
+            .letter-content {
+                height: 440px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ==========================
+         第一页 · 输入页
+         ========================== -->
+    <div id="page-input" class="page active">
+        <div class="header-subtitle">給阿嬤的情書 · 線上銀信局</div>
+        <h1 class="header-title">寫一封漂洋過海的信</h1>
+        <div class="divider">
+            <span class="divider-line"></span>
+            <span class="divider-dot"></span>
+            <span class="divider-line"></span>
+        </div>
+
+        <!-- 收信人 -->
+        <div class="form-group">
+            <div class="form-label">致 <span class="dot">·</span> 收信人</div>
+            <div class="input-row">
+                <div class="select-wrapper">
+                    <select id="toRole" class="form-select">
+                        <option value="妻">妻</option>
+                        <option value="夫">夫</option>
+                        <option value="父親">父親</option>
+                        <option value="母親">母親</option>
+                        <option value="兒">兒</option>
+                        <option value="女">女</option>
+                        <option value="兄">兄</option>
+                        <option value="弟">弟</option>
+                        <option value="姊">姊</option>
+                        <option value="妹">妹</option>
+                        <option value="同鄉">同鄉</option>
+                        <option value="友人">友人</option>
+                    </select>
+                </div>
+                <input type="text" id="toName" class="form-input" placeholder="請填寫收信人姓名" value="淑柔">
+            </div>
+        </div>
+
+        <!-- 寄信人 -->
+        <div class="form-group">
+            <div class="form-label">自 <span class="dot">·</span> 寄信人</div>
+            <div class="input-row">
+                <div class="select-wrapper">
+                    <select id="fromRole" class="form-select">
+                        <option value="夫">夫</option>
+                        <option value="妻">妻</option>
+                        <option value="父親">父親</option>
+                        <option value="母親">母親</option>
+                        <option value="兒">兒</option>
+                        <option value="女">女</option>
+                        <option value="兄">兄</option>
+                        <option value="弟">弟</option>
+                        <option value="姊">姊</option>
+                        <option value="妹">妹</option>
+                        <option value="同鄉">同鄉</option>
+                        <option value="友人">友人</option>
+                    </select>
+                </div>
+                <input type="text" id="fromName" class="form-input" placeholder="請填寫寄信人姓名" value="艾倫">
+            </div>
+        </div>
+
+        <!-- 心里话 -->
+        <div class="form-group">
+            <div class="form-label">心裡話 <span class="dot">·</span> 用大白話寫</div>
+            <textarea id="message" class="form-textarea" placeholder="想說什麼就寫什麼吧,例如:你好嗎?最近想你想得緊,飯也吃不下,晚上睡不好。家裡一切可好?孩子有沒有聽話?銀信局先生會幫你潤色成正式的信件。"></textarea>
+        </div>
+
+        <!-- 随信附上 -->
+        <div class="form-group">
+            <div class="form-label">
+                隨信寄上 <span class="hint">(可選,可複選)</span>
+            </div>
+            <div class="items-tags" id="itemTags">
+                <div class="item-tag" data-value="二百元"><span class="icon">💰</span>二百元</div>
+                <div class="item-tag" data-value="一輛自行車"><span class="icon">🚲</span>一輛自行車</div>
+                <div class="item-tag" data-value="三斤鮮豬肉"><span class="icon">🍖</span>三斤鮮豬肉</div>
+                <div class="item-tag" data-value="一朵木棉花"><span class="icon">🌺</span>一朵木棉花</div>
+                <div class="item-tag" data-value="一封家書"><span class="icon">📜</span>一封家書</div>
+                <div class="item-tag" data-value="一盒洋糖"><span class="icon">🍬</span>一盒洋糖</div>
+            </div>
+            <input type="text" id="customItem" class="form-input" placeholder="也可填寫其他想寄回的物品,如:一壺米酒、一塊布料……">
+        </div>
+
+        <!-- 提交按钮 -->
+        <button id="submitBtn" class="submit-btn">
+            <span class="icon">✈</span> 請銀信局先生代筆
+        </button>
+
+        <div class="footer-text">紙短情長 · 伏惟珍重</div>
+        <div class="disclaimer">
+            本網站為影迷的自發製作,非電影官方商業宣傳<br>
+            所有影視素材版權歸原版權方所有
+        </div>
+
+        <div id="errorBox"></div>
+    </div>
+
+    <!-- ==========================
+         第二页 · 过渡页
+         ========================== -->
+    <div id="page-transition" class="page">
+        <div class="transition-content">
+            <div class="sailing-boat">⛵</div>
+            <div class="transition-title">信件正在漂洋過海<span class="dots-loading"></span></div>
+            <div class="transition-desc">
+                僑批 · 海外華僑通過民間渠道<br>
+                寄回國內的書信與匯款
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================
+         第三页 · 信封页
+         ========================== -->
+    <div id="page-envelope" class="page">
+        <div class="section-label">信 封</div>
+        <div class="envelope-wrapper">
+            <div class="envelope" id="envelope">
+                <div class="envelope-col envelope-left">
+                    <div class="envelope-left-text" id="envelopeLeft"></div>
+                </div>
+                <div class="envelope-col envelope-middle">
+                    <div class="qiaopi-big">僑批</div>
+                </div>
+                <div class="envelope-col envelope-right">
+                    <div class="envelope-right-top">紙短情長 伏惟珍重</div>
+                    <div class="envelope-right-bottom" id="envelopeRight"></div>
+                </div>
+            </div>
+        </div>
+        <button id="openLetterBtn" class="continue-btn">▼ 拆 開 信 紙</button>
+    </div>
+
+    <!-- ==========================
+         第四页 · 信纸页
+         ========================== -->
+    <div id="page-letter" class="page">
+        <div class="section-label">信 紙</div>
+        <div class="paper-wrapper">
+            <div class="paper" id="paper">
+                <div class="paper-inner">
+                    <div class="letter-content" id="letterContent"></div>
+                </div>
+            </div>
+        </div>
+        <button id="downloadBtn" class="download-btn">
+            <span>⬇</span> 下 載 圖 片
+        </button>
+        <div class="action-row">
+            <button id="copyBtn" class="action-btn">複製信件文字</button>
+            <button id="rewriteBtn" class="action-btn">重 寫</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ===========================================================
+    // ⚠️ 重要 · 請在此處填入你的 DeepSeek API Key
+    // ===========================================================
+    // 1. 前往 https://platform.deepseek.com/api_keys 申請 API Key
+    // 2. 將下方 "sk-在這裡粘貼你的key" 替換為你的真實 Key
+    // 3. 建議在 DeepSeek 後台為這個 Key 設置月度消費上限,以防萬一
+    // ===========================================================
+    const DEEPSEEK_API_KEY = "sk-6f4387fb96d04c23922c292858eeb2ba";
+    const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
+    const DEEPSEEK_MODEL   = "deepseek-v4-flash";   // 也可改為 "deepseek-reasoner" 使用推理模型
+
+    // ===========================================================
+    // System Prompt · 銀信局代筆先生的人設
+    // ===========================================================
+    const SYSTEM_PROMPT =
+`你是民國時期嶺南(廣東、福建一帶)銀信局的代筆先生。你的任務是將客戶口述的白話內容,潤色為一封格式規整、情真意切的僑批(海外華僑寄回國內的家書)。
+
+【書寫要求】
+1. 使用半文言文的傳統書信體,語言典雅含蓄但不晦澀,情感真摯不矯揉
+2. 開頭根據收信人身份使用合適的稱呼,並跟以問候語:
+   - 對妻:吾妻 X X 妝次 / 展信佳 / 見字如晤
+   - 對夫:吾夫 X X 如晤 / 見信如面
+   - 對父親:父親大人膝下 / 敬稟者
+   - 對母親:母親大人膝下 / 敬稟者
+   - 對兒:吾兒 X X 知悉 / 見信安好
+   - 對女:吾女 X X 知悉 / 見信安好
+   - 對兄:仁兄 X X 大鑒 / 見信如晤
+   - 對弟:賢弟 X X 如晤 / 展信佳
+   - 對姊:姊姊 X X 妝次 / 見信如晤
+   - 對妹:賢妹 X X 妝次 / 見信如晤
+   - 對同鄉/友人:X X 兄/先生 大鑒 / 見信如晤
+3. 正文需自然融入客戶口述的思念、近況、囑托,避免生硬堆砌或過度渲染
+4. 若有附帶錢物,使用傳統表達,如「隨信附上紋銀二百元,聊充家用」「另附 X X,望查收」
+5. 結尾使用「紙短情長,伏惟珍重」「順頌 時祺」「敬請 福安」等傳統套語
+6. 落款格式為:寄信人身份 + 姓名 + 日期,三部分用空格分隔(如「夫 艾倫 二〇二六年五月十四日」)
+7. 全文使用繁體字
+8. 字數控制在 100-180 字之間,貴在情真,不必冗長
+
+【輸出格式】
+請直接輸出信件正文,每段用一個換行符 "\n" 分隔:
+- 第一行:稱呼 + 問候語
+- 中間若干行:正文(可分多段,每段換行)
+- 倒數第二行:結尾套語
+- 最後一行:落款(身份 + 姓名 + 日期,中間空格分隔)
+
+直接輸出信件正文,不要任何解釋說明,不要使用 markdown 標記,不要在首尾加引號。`;
+
+    // ===========================================================
+    // 工具函數 · 阿拉伯數字轉中文大寫日期
+    // ===========================================================
+    function toChineseYear(num) {
+        const digits = ['〇','一','二','三','四','五','六','七','八','九'];
+        return num.toString().split('').map(d => digits[parseInt(d)]).join('');
+    }
+
+    function toChineseDay(num) {
+        if (num <= 10) {
+            const cn = ['','一','二','三','四','五','六','七','八','九','十'];
+            return cn[num];
+        }
+        if (num < 20) return '十' + (num === 10 ? '' : toChineseDay(num - 10));
+        if (num === 20) return '二十';
+        if (num < 30) return '二十' + (num === 20 ? '' : toChineseDay(num - 20));
+        if (num === 30) return '三十';
+        return '三十' + toChineseDay(num - 30);
+    }
+
+    function formatChineseDate(date) {
+        return `${toChineseYear(date.getFullYear())}年${toChineseDay(date.getMonth() + 1)}月${toChineseDay(date.getDate())}日`;
+    }
+
+    // ===========================================================
+    // 狀態管理
+    // ===========================================================
+    let currentLetter = '';
+    let currentFormData = {};
+
+    // ===========================================================
+    // 頁面切換
+    // ===========================================================
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===========================================================
+    // 物品標籤點擊
+    // ===========================================================
+    document.querySelectorAll('.item-tag').forEach(tag => {
+        tag.addEventListener('click', () => {
+            tag.classList.toggle('selected');
+        });
+    });
+
+    // ===========================================================
+    // 表單收集
+    // ===========================================================
+    function collectFormData() {
+        const toRole   = document.getElementById('toRole').value.trim();
+        const toName   = document.getElementById('toName').value.trim();
+        const fromRole = document.getElementById('fromRole').value.trim();
+        const fromName = document.getElementById('fromName').value.trim();
+        const message  = document.getElementById('message').value.trim();
+
+        const items = [];
+        document.querySelectorAll('.item-tag.selected').forEach(tag => {
+            items.push(tag.dataset.value);
+        });
+        const custom = document.getElementById('customItem').value.trim();
+        if (custom) items.push(custom);
+
+        return {
+            toRole, toName, fromRole, fromName, message, items,
+            dateString: formatChineseDate(new Date())
+        };
+    }
+
+    // ===========================================================
+    // 表單校驗
+    // ===========================================================
+    function validateForm(data) {
+        if (!data.toName)   return '請填寫收信人姓名';
+        if (!data.fromName) return '請填寫寄信人姓名';
+        if (!data.message)  return '請寫下你想對 ta 說的話';
+        if (data.message.length < 4) return '心裡話太短了,再多寫幾句吧';
+        return null;
+    }
+
+    function showError(msg) {
+        document.getElementById('errorBox').innerHTML = `<div class="error-message">${msg}</div>`;
+    }
+    function clearError() {
+        document.getElementById('errorBox').innerHTML = '';
+    }
+
+    // ===========================================================
+    // 調用 DeepSeek API
+    // ===========================================================
+    async function generateLetter(data) {
+        const itemsText = data.items.length > 0 ? data.items.join('、') : '無';
+
+        const userMessage =
+`【客戶信息】
+收信人:${data.toRole} ${data.toName}
+寄信人:${data.fromRole} ${data.fromName}
+日期:${data.dateString}
+隨信附上:${itemsText}
+
+【客戶口述心裡話】
+${data.message}
+
+請按要求潤色為一封僑批。`;
+
+        const response = await fetch(DEEPSEEK_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: DEEPSEEK_MODEL,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'user',   content: userMessage }
+                ],
+                temperature: 0.82,
+                max_tokens: 700,
+                stream: false
+            })
+        });
+
+        if (!response.ok) {
+            const errText = await response.text().catch(() => '');
+            // 嘗試解析 JSON 錯誤信息
+            try {
+                const errJson = JSON.parse(errText);
+                const detail = errJson.error?.message || errJson.message || '';
+                throw new Error(`API 調用失敗(${response.status}): ${detail.substring(0, 120)}`);
+            } catch {
+                throw new Error(`API 調用失敗(${response.status}): ${errText.substring(0, 200)}`);
+            }
+        }
+
+        const result = await response.json();
+        const content = result.choices?.[0]?.message?.content;
+        if (!content) throw new Error('API 返回內容為空,請稍後重試');
+        return content.trim();
+    }
+
+    // ===========================================================
+    // 渲染信封
+    // ===========================================================
+    function renderEnvelope(data) {
+        document.getElementById('envelopeLeft').textContent =
+            `${data.toName}    ${data.toRole}    親啟`;
+        document.getElementById('envelopeRight').textContent =
+            `自 ${data.fromName} 寄`;
+    }
+
+    // ===========================================================
+    // 渲染信紙
+    // ===========================================================
+    function renderLetter(letterText) {
+        const container = document.getElementById('letterContent');
+        container.innerHTML = '';
+
+        const lines = letterText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+        lines.forEach((line, index) => {
+            const isLast = index === lines.length - 1;
+            const div = document.createElement('div');
+            div.className = 'letter-line' + (isLast ? ' signature' : '');
+            div.textContent = line;
+            container.appendChild(div);
+        });
+    }
+
+    // ===========================================================
+    // 提交按鈕事件
+    // ===========================================================
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+        clearError();
+        const data = collectFormData();
+        const errorMsg = validateForm(data);
+        if (errorMsg) { showError(errorMsg); return; }
+
+        if (!DEEPSEEK_API_KEY || DEEPSEEK_API_KEY.includes('在這裡粘貼')) {
+            showError('⚠ 請先在代碼頂部填入你的 DeepSeek API Key,才能請銀信局先生代筆');
+            return;
+        }
+
+        currentFormData = data;
+        showPage('page-transition');
+
+        try {
+            const letter = await generateLetter(data);
+            currentLetter = letter;
+
+            renderEnvelope(data);
+            renderLetter(letter);
+
+            // 過渡頁至少停留 1.2 秒,營造「漂洋過海」的儀式感
+            const elapsed = Date.now();
+            const minWait = 1200;
+            await new Promise(r => setTimeout(r, Math.max(0, minWait - (Date.now() - elapsed))));
+
+            showPage('page-envelope');
+        } catch (err) {
+            console.error(err);
+            showPage('page-input');
+            showError('代筆失敗: ' + (err.message || '未知錯誤'));
+        }
+    });
+
+    // ===========================================================
+    // 拆開信紙按鈕
+    // ===========================================================
+    document.getElementById('openLetterBtn').addEventListener('click', () => {
+        showPage('page-letter');
+    });
+
+    // ===========================================================
+    // 下載圖片
+    // ===========================================================
+    document.getElementById('downloadBtn').addEventListener('click', async () => {
+        const btn = document.getElementById('downloadBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span>⏳</span> 正在生成圖片...';
+        btn.disabled = true;
+
+        try {
+            // 等待網頁字體全部加載完畢,避免截圖時字體錯位
+            await document.fonts.ready;
+
+            const target = document.getElementById('paper');
+            const canvas = await html2canvas(target, {
+                scale: 2.5,               // 高清
+                backgroundColor: '#f4ead5',
+                useCORS: true,
+                logging: false,
+                allowTaint: true
+            });
+
+            const link = document.createElement('a');
+            link.download = `僑批_${currentFormData.toName || 'letter'}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } catch (err) {
+            console.error(err);
+            alert('生成圖片失敗,請嘗試手動截圖保存');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    });
+
+    // ===========================================================
+    // 複製文字
+    // ===========================================================
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+        try {
+            await navigator.clipboard.writeText(currentLetter);
+            const btn = document.getElementById('copyBtn');
+            const original = btn.textContent;
+            btn.textContent = '已複製 ✓';
+            setTimeout(() => btn.textContent = original, 1500);
+        } catch {
+            alert('複製失敗,請手動選取文字複製');
+        }
+    });
+
+    // ===========================================================
+    // 重寫
+    // ===========================================================
+    document.getElementById('rewriteBtn').addEventListener('click', () => {
+        showPage('page-input');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+</script>
+
+</body>
+</html>
